@@ -1,1 +1,4 @@
 data/
+
+# Dependencias de PHP (Composer)
+vendor/
