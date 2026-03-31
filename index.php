@@ -1,48 +1,71 @@
-<?
-// Parsear los k/v pares de Request URI y ponerlos en _REQUEST variables
-$string = preg_replace("/\?.+/", "", $_SERVER['REQUEST_URI']);
-$array  = explode("/", $string);
-$length = count($array);
-for ($i = 2; $i < $length - 1; ++$i) {
-    $_REQUEST[$array[$i]] = $array[$i+1];
-    $i                    = $i+1;
-}
+<?php
 
-// Validar que el parametro cédula esté definido
-if (isset($_REQUEST['cedula'])) 
-{
-    // Validar el formato de la cédula, 9 dígitos consecutivos.
-    if (preg_match('/\d{9}/', $_REQUEST['cedula'])) 
-    {
-        // Connectarse al DB
-        $m = new MongoClient();
-        $db = $m->selectDB('padron');
-        $collection = new MongoCollection($db, 'padron');
-        // Buscar
-        $info = $collection->findOne(array("CEDULA"=>(int)$_REQUEST['cedula']));
-        // Validar Resultado
-        if(!is_null($info)) {
-          // Crear el arreglo de respuesta
-          $result['cedula']          = $info['CEDULA'];
-          $result['nombre']          = $info['NOMBRE'];
-          $result['apellidoPaterno'] = $info['PAPELLIDO'];
-          $result['apellidoMaterno'] = $info['SAPELLIDO'];
-          $result['sexo']            = $info['SEXO']==1?'Masculino':'Femenino';
-          $result['vencimiento']     = $info['FECHACADUC'];
-        }else {
-          $result[] = "No encontrado";
-        }
-        // Respuesta
-        header('Content-type: text/json');
-        echo json_encode($result);
-    } else {
-        // Respuesta en caso de que la cédula tenga un formato no soportado
-        header('Content-type: text/plain');
-        header('HTTP/1.1 400 Bad Request', true, 400);
-        echo "Número de cédula debe ser de nueve dígitos";
+require 'vendor/autoload.php';
+
+use MongoDB\Client;
+
+// Leer la ruta
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$partes = array_values(array_filter(explode('/', $path)));
+
+// Ruta esperada:
+// http://localhost:8000/cedula/101240037
+
+if (isset($partes[0]) && $partes[0] === 'cedula' && isset($partes[1])) {
+    $cedula = $partes[1];
+
+    // Validar exactamente 9 dígitos
+    if (!preg_match('/^\d{9}$/', $cedula)) {
+        http_response_code(400);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            "mensaje" => "Número de cédula debe ser de nueve dígitos"
+        ]);
+        exit;
     }
+
+    try {
+        // Conectar a MongoDB
+        $client = new Client("mongodb://127.0.0.1:27017");
+
+        // Seleccionar base y colección
+        $collection = $client->padron->personas;
+
+        // Buscar por cédula
+        $info = $collection->findOne([
+            "CEDULA" => (int)$cedula
+        ]);
+
+        if ($info) {
+            $result = [
+                "cedula" => $info["CEDULA"] ?? null,
+                "nombre" => $info["NOMBRE"] ?? null,
+                "apellidoPaterno" => $info["PAPELLIDO"] ?? null,
+                "apellidoMaterno" => $info["SAPELLIDO"] ?? null,
+                "sexo" => (isset($info["SEXO"]) && (int)$info["SEXO"] === 1) ? "Masculino" : "Femenino",
+                "vencimiento" => $info["FECHACADUC"] ?? null
+            ];
+
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($result);
+        } else {
+            http_response_code(404);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode([
+                "mensaje" => "No encontrado"
+            ]);
+        }
+
+    } catch (Exception $e) {
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            "mensaje" => "Error al consultar MongoDB",
+            "error" => $e->getMessage()
+        ]);
+    }
+
 } else {
-    // Respuesta en caso de que no tenga parametros.
-    header('Content-type: text/plain');
-    echo "Uso:\n  http://mae.cr/padron/cedula/122223333";
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "Uso:\nhttp://localhost:8000/cedula/101240037";
 }
