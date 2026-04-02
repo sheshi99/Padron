@@ -1,41 +1,98 @@
-# Ejemplo de API para Consulta de Padrón Electoral
+# API para Consulta de Padrón Electoral
 
- > Código no esta abstracto, ni OO, por la poca complejidad del proyecto. Pero es fácilmente abstraible e implementable en un método con cambios mínimos.
+ > Esta API permite realizar consultas de ciudadanos costarricenses utilizando una base de datos local de MongoDB cargada con los datos del Tribunal Supremo de Elecciones (TSE).
 
 ## Requerimientos:
-  - Webserver. (Apache (Sirve con cualquiera, pero hay que jugarsela con el
-    .htacces/rewrite rule))
-  - API:
-    + PHP 5.5+
-    + MongoDB PECL Module.
-  - Base de Datos:
-    + MongoDB 
+- **Webserver:** Servidor integrado de PHP (php -S localhost:8000)  
+
+
+- **API:**
+  - PHP 8.2 (Thread Safe)
+  - Extensión MongoDB (`mongodb` - PECL)
+
+- **Base de Datos:**
+  - MongoDB
+
+- **Dependencias:**
+  - Composer
 
 ## Base de Datos
-El export de la base de datos en mongo (BSON) se encuenta en el directorio data. Como 1GB más o menos.
+Este proyecto utiliza el archivo oficial del padrón electoral en formato `.txt`.
 
-Descomprimir los datos:
-```
-tar zxvf padron.json.tgz
+### 🔹 Descargar padrón
+
+Descargar desde el sitio oficial del TSE:
+
+http://www.tse.go.cr/zip/padron/padron_completo.zip
+
+Descomprimir:
+
+```bash
+unzip padron_completo.zip
 ```
 
-Para importar estos datos:
-```
-mongoimport --db padron --collection padron --file padron.json
+### 🔹 Importar datos a MongoDB
+
+```bash
+mongoimport --db padron --collection personas --type csv -f CEDULA,CODELEC,SEXO,FECHACADUC,JUNTA,NOMBRE,PAPELLIDO,SAPELLIDO --file PADRON_COMPLETO.txt
 ```
 
-Crear el índice usando el Mongo CLI
+### 🔹 Crear índice
+
+```bash
+use padron;
+db.personas.createIndex({ "CEDULA": 1 });
 ```
-    use padron;
-    db.padron.ensureIndex({"CEDULA" : 1});
+
+### 🔹 Verificar datos
+
+```bash
+db.personas.findOne({ CEDULA: 101240037 });
 ```
+
+
+## Configuración del Entorno PHP
+
+
+### 🔹 Habilitar extensión MongoDB
+
+Descargar el driver desde PECL (PHP 8.2 Thread Safe x64)
+
+https://pecl.php.net/package/mongodb/2.2.1/windows
+
+Copiar el archivo .dll en:
+
+C:\xampp\php\ext
+
+
+Editar el archivo php.ini y agregar:
+
+extension=mongodb
+
+### 🔹 Verificar instalación
+
+php -m | findstr mongodb
+
+
+## Instalación de dependencias
+
+Dentro de la carpeta raíz del proyecto ejecutar:
+
+composer require mongodb/mongodb
+
+## Ejecutar el Proyecto
+
+Levanta el servidor local:
+php -S localhost:8000
+
+
+## Ejemplo de uso
+
+Puedes consultar una cédula desde el navegador o herramientas como Postman:
+
+http://localhost:8000/cedula/101240037
+
+
 ## Software
-  Poner el index.php y el .htacces en un directorio accesible por HTTP.
+ El proyecto utiliza el servidor integrado de PHP (`php -S localhost:8000`), sin necesidad de configuración adicional.
 
-## Actualizar el Padrón
- - Bajar el archivo PADRON_COMPLETO.txt de: http://www.tse.go.cr/zip/padron/padron_completo.zip
- - Descomprimir: unzip padron_completo.zip
- - Cargar los datos a la base de datos (asegurese de remover la tabla vieja [db.padron.drop()]
-``
-mongoimport --db padron --collection padron --type csv -f CEDULA,CODELEC,SEXO,FECHACADUC,JUNTA,NOMBRE,PAPELLIDO,SAPELLIDO --file PADRON_COMPLETO.txt
-``
