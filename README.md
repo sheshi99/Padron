@@ -60,37 +60,51 @@ Descargar el driver desde PECL (PHP 8.2 Thread Safe x64)
 
 https://pecl.php.net/package/mongodb/2.2.1/windows
 
-Copiar el archivo .dll en:
+Copiar el archivo .dll en C:\xampp\php\ext:
 
-C:\xampp\php\ext
+Abrir archivo:
 
+```bash
+code C:\xampp\php\php.ini
+```
 
-Editar el archivo php.ini y agregar:
+Editar el archivo php.ini y agregar en Dynamic Dependency:
 
+```bash
 extension=mongodb
+```
 
 ### 🔹 Verificar instalación
 
+```bash
 php -m | findstr mongodb
+```
 
 
 ## Instalación de dependencias
 
 Dentro de la carpeta raíz del proyecto ejecutar:
 
+```bash
 composer require mongodb/mongodb
+```
 
 ## Ejecutar el Proyecto
 
 Levanta el servidor local:
+
+```bash
 php -S localhost:8000
+```
 
 
 ## Ejemplo de uso
 
 Puedes consultar una cédula desde el navegador o herramientas como Postman:
 
+```bash
 http://localhost:8000/cedula/101240037
+```
 
 
 ## Software
