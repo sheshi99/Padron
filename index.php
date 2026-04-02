@@ -41,9 +41,7 @@ if (isset($partes[0]) && $partes[0] === 'cedula' && isset($partes[1])) {
                 "cedula" => $info["CEDULA"] ?? null,
                 "nombre" => $info["NOMBRE"] ?? null,
                 "apellidoPaterno" => $info["PAPELLIDO"] ?? null,
-                "apellidoMaterno" => $info["SAPELLIDO"] ?? null,
-                "sexo" => (isset($info["SEXO"]) && (int)$info["SEXO"] === 1) ? "Masculino" : "Femenino",
-                "vencimiento" => $info["FECHACADUC"] ?? null
+                "apellidoMaterno" => $info["SAPELLIDO"] ?? null
             ];
 
             header('Content-Type: application/json; charset=utf-8');
