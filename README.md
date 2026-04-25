@@ -9,6 +9,7 @@
   - Composer (para instalar dependencias)
 
 
+<br><br>
 ## Configuración del Entorno PHP
 
 
@@ -43,7 +44,7 @@ php -m | findstr mongodb
 
 
 
-
+<br><br>
 ## Base de Datos
 Este proyecto utiliza el archivo oficial del padrón electoral en formato `.txt`.
 
@@ -94,6 +95,7 @@ db.personas.findOne({ CEDULA: 101240037 });
 
 
 
+<br><br>
 ## Instalación de dependencias
 
 Dentro de la carpeta raíz del proyecto ejecutar:
@@ -111,6 +113,7 @@ php -S localhost:8000
 ```
 
 
+<br><br>
 ## Ejemplo de uso
 
 Puedes consultar una cédula desde el navegador o herramientas como Postman:
@@ -120,6 +123,7 @@ http://localhost:8000/cedula/101240037
 ```
 
 
+<br><br>
 ## Software
  El proyecto utiliza el servidor integrado de PHP (`php -S localhost:8000`), sin necesidad de configuración adicional.
 
