@@ -19,7 +19,7 @@ Descargarlo desde PECL (PHP 8.2 Thread Safe x64): https://pecl.php.net/package/m
 
 #### 2 - Instalar el driver
 
-Copiar el archivo .dll en C:\xampp\php\ext:
+Copiar el archivo .dll en C:\xampp\php\ext.
 
 #### 3- Configurar PHP
 
@@ -61,7 +61,7 @@ unzip padron_completo.zip
 
 ### 🔹 Importar datos a MongoDB
 
-#### Importante: Si no cuenta con mongoexport, puede descargar la herramienta de MongoDB, en la sección de "MongoDB Command Line Database Tools Download"
+Si no cuenta con mongoexport, puede descargar la herramienta de MongoDB, en la sección de "MongoDB Command Line Database Tools Download"
 
 https://www.mongodb.com/try/download/database-tools
 
@@ -73,12 +73,12 @@ mongoimport --db padron --collection personas --type csv -f CEDULA,CODELEC,SEXO,
 
 ### 🔹 Crear índice
 
-#### 1- Abrir MongoDB Shell y ejecutar:
+#### 1- Abrir MongoDB Shell y ejecutar
 ```bash
 mongo
 ```
 
-#### 2- Seleccionar la base de datos y crear el indice:
+#### 2- Seleccionar la base de datos y crear el indice
 
 ```bash
 use padron;
