@@ -1,22 +1,26 @@
 <?php
 
-require 'vendor/autoload.php';
 
-use MongoDB\Client;
+require 'vendor/autoload.php'; // Asegúrate de tener el autoload de Composer para MongoDB
 
-// Leer la ruta
+use MongoDB\Client; // Para conectar a MongoDB
+
+
+// Obtener la parte de la URL después del dominio
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$partes = array_values(array_filter(explode('/', $path)));
+$partes = array_values(array_filter(explode('/', $path))); // Eliminar partes vacías y reindexar el array
 
 // Ruta esperada:
 // http://localhost:8000/cedula/101240037
 
-if (isset($partes[0]) && $partes[0] === 'cedula' && isset($partes[1])) {
+
+// Validar que la primera parte sea "cedula" y que exista una segunda parte
+if (isset($partes[0]) && $partes[0] === 'cedula' && isset($partes[1])) { 
     $cedula = $partes[1];
 
     // Validar exactamente 9 dígitos
     if (!preg_match('/^\d{9}$/', $cedula)) {
-        http_response_code(400);
+        http_response_code(400); 
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             "mensaje" => "Número de cédula debe ser de nueve dígitos"
@@ -36,6 +40,7 @@ if (isset($partes[0]) && $partes[0] === 'cedula' && isset($partes[1])) {
             "CEDULA" => (int)$cedula
         ]);
 
+        // Si encuentra la información, devolverla en formato JSON
         if ($info) {
             $result = [
                 "cedula" => $info["CEDULA"] ?? null,
