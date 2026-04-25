@@ -61,6 +61,12 @@ unzip padron_completo.zip
 
 ### 🔹 Importar datos a MongoDB
 
+#### Importante: Si no cuenta con mongoexport, puede descargar la herramienta de MongoDB, en la sección de "MongoDB Command Line Database Tools Download"
+
+https://www.mongodb.com/try/download/database-tools
+
+
+
 ```bash
 mongoimport --db padron --collection personas --type csv -f CEDULA,CODELEC,SEXO,FECHACADUC,JUNTA,NOMBRE,PAPELLIDO,SAPELLIDO --file PADRON_COMPLETO.txt
 ```
