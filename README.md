@@ -104,6 +104,8 @@ Dentro de la carpeta raíz del proyecto ejecutar:
 composer require mongodb/mongodb
 ```
 
+
+<br><br>
 ## Ejecutar el Proyecto
 
 Inicia el servidor local de PHP con el siguiente comando:
