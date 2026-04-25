@@ -1,20 +1,48 @@
 # API para Consulta de Padrón Electoral
 
- > Esta API permite realizar consultas de ciudadanos costarricenses utilizando una base de datos local de MongoDB cargada con los datos del Tribunal Supremo de Elecciones (TSE).
+ Esta API permite realizar consultas de ciudadanos costarricenses utilizando una base de datos local de MongoDB cargada con los datos del Tribunal Supremo de Elecciones (TSE).
 
 ## Requerimientos:
-- **Webserver:** Servidor integrado de PHP (php -S localhost:8000)  
+  - Webserver: Servidor integrado de PHP (php -S localhost:8000)  
+  - PHP 8.2 (usado de XAMPP o instalado directamente)
+  - MongoDB (extensión MongoDB para PHP)
+  - Composer (para instalar dependencias)
 
 
-- **API:**
-  - PHP 8.2 (Thread Safe)
-  - Extensión MongoDB (`mongodb` - PECL)
+## Configuración del Entorno PHP
 
-- **Base de Datos:**
-  - MongoDB
 
-- **Dependencias:**
-  - Composer
+### 🔹 Habilitar extensión MongoDB
+
+#### 1- Descargar el driver de MongoDB
+Descargarlo desde PECL (PHP 8.2 Thread Safe x64): https://pecl.php.net/package/mongodb/2.2.1/windows
+
+#### 2 - Instalar el driver
+
+Copiar el archivo .dll en C:\xampp\php\ext:
+
+#### 3- Configurar PHP
+
+Abrir archivo php.ini en:
+
+```bash
+code C:\xampp\php\php.ini
+```
+
+Editar el archivo php.ini y agregar en Dynamic Dependency:
+
+```bash
+extension=mongodb
+```
+
+### 🔹 Verificar instalación
+
+```bash
+php -m | findstr mongodb
+```
+
+
+
 
 ## Base de Datos
 Este proyecto utiliza el archivo oficial del padrón electoral en formato `.txt`.
@@ -39,6 +67,13 @@ mongoimport --db padron --collection personas --type csv -f CEDULA,CODELEC,SEXO,
 
 ### 🔹 Crear índice
 
+#### 1- Abrir MongoDB Shell y ejecutar:
+```bash
+mongo
+```
+
+#### 2- Seleccionar la base de datos y crear el indice:
+
 ```bash
 use padron;
 db.personas.createIndex({ "CEDULA": 1 });
@@ -51,34 +86,6 @@ db.personas.findOne({ CEDULA: 101240037 });
 ```
 
 
-## Configuración del Entorno PHP
-
-
-### 🔹 Habilitar extensión MongoDB
-
-Descargar el driver desde PECL (PHP 8.2 Thread Safe x64)
-
-https://pecl.php.net/package/mongodb/2.2.1/windows
-
-Copiar el archivo .dll en C:\xampp\php\ext:
-
-Abrir archivo:
-
-```bash
-code C:\xampp\php\php.ini
-```
-
-Editar el archivo php.ini y agregar en Dynamic Dependency:
-
-```bash
-extension=mongodb
-```
-
-### 🔹 Verificar instalación
-
-```bash
-php -m | findstr mongodb
-```
 
 
 ## Instalación de dependencias
@@ -91,7 +98,7 @@ composer require mongodb/mongodb
 
 ## Ejecutar el Proyecto
 
-Levanta el servidor local:
+Inicia el servidor local de PHP con el siguiente comando:
 
 ```bash
 php -S localhost:8000
